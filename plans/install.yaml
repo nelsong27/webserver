@@ -1,0 +1,33 @@
+parameters:
+  src:
+    type: String
+  targets:
+    type: TargetSpec
+
+steps:
+  - name: install_apache
+    task: package
+    targets: $targets
+    parameters:
+      action: install
+      name: httpd
+    description: "Install Apache using the pakages task"
+    
+  - name: patch_servers
+    command: yum -y update
+    targets: $targets
+    description: "Fully patching system"
+    
+  - name: start_httpd_service
+    task: service
+    targets: $targets
+    parameters:
+      action: start
+      name: httpd
+    description: "Start httpd service"
+
+  - name: upload_homepage
+    upload: $src
+    destination: /var/www/html/index.html
+    targets: $targets
+    description: "Upload homepage"
